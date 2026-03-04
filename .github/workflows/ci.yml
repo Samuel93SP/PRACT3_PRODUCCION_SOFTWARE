@@ -1,31 +1,45 @@
 name: CI
 
 on:
-  push:
-    branches: ["**"]
+    push:
+        branches: ["**"]
+    pull_request:
+        branches: ["**"]
 
 jobs:
-  lint-and-test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+    lint-and-test:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
 
-      - name: Set up Python
+            - name: Set up Python
+              uses: actions/setup-python@v4
+              with:
+                  python-version: "3.11" # Ajusta si usas otra versión
 
-      - name: Install uv
+            - name: Install uv
+              run: pip install uv
 
-      - name: Install dependencies
+            - name: Install dependencies
+              run: uv sync
 
-      - name: Install ruff and mypy
+            - name: Install ruff and mypy
+              run: uv pip install ruff mypy
 
-      - name: Ruff format
+            - name: Ruff format
+              run: uv run ruff format --check .
 
-      - name: Ruff linter
+            - name: Ruff linter
+              run: uv run ruff check .
 
-      - name: Mypy
+            - name: Mypy
+              run: uv run mypy .
 
-      - name: Unit tests
+            - name: Unit tests
+              run: uv run pytest core/tests/unit
 
-      - name: Integration tests
+            - name: Integration tests
+              run: uv run pytest core/tests/integration
 
-      - name: BDD tests
+            - name: BDD tests
+              run: uv run pytest core/tests/behaviour
