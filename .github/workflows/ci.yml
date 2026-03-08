@@ -9,37 +9,44 @@ on:
 jobs:
     lint-and-test:
         runs-on: ubuntu-latest
+
         steps:
+            # 1️ Checkout del código
             - uses: actions/checkout@v4
 
+            # 2️ Configurar Python
             - name: Set up Python
               uses: actions/setup-python@v4
               with:
                   python-version: "3.11" # Ajusta si usas otra versión
 
-            - name: Install uv
-              run: pip install uv
-
+            # 3️ Instalar dependencias
             - name: Install dependencies
-              run: uv sync
+              run: |
+                  pip install --upgrade pip
+                  pip install uv
+                  uv sync
+                  uv pip install ruff mypy pytest pytest-bdd
 
-            - name: Install ruff and mypy
-              run: uv pip install ruff mypy
+            # 4️ Formatear código automáticamente
+            - name: Format code with Ruff
+              run: uv run ruff format .
 
-            - name: Ruff format
-              run: uv run ruff format --check .
-
-            - name: Ruff linter
+            # 5️ Comprobar errores en el código
+            - name: Lint with Ruff
               run: uv run ruff check .
 
-            - name: Mypy
+            - name: Type check with Mypy
               run: uv run mypy .
 
-            - name: Unit tests
+            # 6️ Ejecutar tests unitarios
+            - name: Run unit tests
               run: uv run pytest core/tests/unit
 
-            - name: Integration tests
+            # 7️ Ejecutar tests de integración
+            - name: Run integration tests
               run: uv run pytest core/tests/integration
 
-            - name: BDD tests
+            # 8️ Ejecutar tests BDD
+            - name: Run BDD tests
               run: uv run pytest core/tests/behaviour
