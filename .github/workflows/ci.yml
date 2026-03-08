@@ -20,7 +20,7 @@ jobs:
               with:
                   python-version: "3.11" # Ajusta si usas otra versión
 
-            # 3️ Instalar dependencias
+            #3️ Instalar dependencias
             - name: Install dependencies
               run: |
                   pip install --upgrade pip
